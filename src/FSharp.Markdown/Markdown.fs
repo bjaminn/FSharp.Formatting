@@ -31,7 +31,7 @@ type MarkdownSpan =
   | AnchorLink of string 
   | DirectLink of MarkdownSpans * (string * option<string>)
   | IndirectLink of MarkdownSpans * string * string
-  | DirectImage of string * (string * option<string>)
+  | DirectImage of string * (string * option<MarkdownSpans>)
   | IndirectImage of string * string * string
   | HardLineBreak
   | LatexInlineMath of string

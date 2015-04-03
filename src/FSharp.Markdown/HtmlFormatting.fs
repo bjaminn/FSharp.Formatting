@@ -96,18 +96,44 @@ let rec formatSpan (ctx:FormattingContext) = function
       ctx.Writer.Write("]")
       ctx.Writer.Write(original)
 
-  | IndirectImage(body, _, LookupKey ctx.Links (link, title)) 
-  | DirectImage(body, (link, title)) -> 
-      ctx.Writer.Write("<img src=\"")
-      ctx.Writer.Write(htmlEncodeQuotes link)
-      ctx.Writer.Write("\" alt=\"")
-      ctx.Writer.Write(htmlEncodeQuotes body)
-      match title with 
+  | IndirectImage(body, _, LookupKey ctx.Links (link, title)) ->
+      match title with
       | Some title ->
-          ctx.Writer.Write("\" title=\"")
+          ctx.Writer.Write("<figure>")
+          ctx.Writer.Write("<img src=\"")
+          ctx.Writer.Write(htmlEncodeQuotes link)
+          ctx.Writer.Write("\" alt=\"")
+          ctx.Writer.Write(htmlEncodeQuotes body)
+          ctx.Writer.Write("\" />")
+          ctx.Writer.Write("<figcaption>")
           ctx.Writer.Write(htmlEncodeQuotes title)
-      | _ -> ()
-      ctx.Writer.Write("\" />")
+          ctx.Writer.Write("</figcaption>")
+          ctx.Writer.Write("</figure>")
+      | _ ->
+          ctx.Writer.Write("<img src=\"")
+          ctx.Writer.Write(htmlEncodeQuotes link)
+          ctx.Writer.Write("\" alt=\"")
+          ctx.Writer.Write(htmlEncodeQuotes body)
+          ctx.Writer.Write("\" />")
+  | DirectImage(body, (link, title)) -> 
+      match title with
+      | Some title ->
+          ctx.Writer.Write("<figure>")
+          ctx.Writer.Write("<img src=\"")
+          ctx.Writer.Write(htmlEncodeQuotes link)
+          ctx.Writer.Write("\" alt=\"")
+          ctx.Writer.Write(htmlEncodeQuotes body)
+          ctx.Writer.Write("\" />")
+          ctx.Writer.Write("<figcaption>")
+          formatSpans ctx title
+          ctx.Writer.Write("</figcaption>")
+          ctx.Writer.Write("</figure>")
+      | _ ->
+          ctx.Writer.Write("<img src=\"")
+          ctx.Writer.Write(htmlEncodeQuotes link)
+          ctx.Writer.Write("\" alt=\"")
+          ctx.Writer.Write(htmlEncodeQuotes body)
+          ctx.Writer.Write("\" />")
   | IndirectImage(body, original, _) ->
       ctx.Writer.Write("[")
       ctx.Writer.Write(body)

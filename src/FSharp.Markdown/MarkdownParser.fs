@@ -220,7 +220,7 @@ let rec parseChars acc input = seq {
   // Recognize image - this is a link prefixed with the '!' symbol
   | '!'::DirectLink (body, link, rest) ->
       yield! accLiterals.Value
-      yield DirectImage(String(Array.ofList body), getLinkAndTitle (String(Array.ofList link)))
+      yield DirectImage(String(Array.ofList body), getLinkAndTitle (String(Array.ofList link)) |> (fun (src,cap) -> src, match cap with | None -> None | Some(str) -> Some(parseChars [] (str|>List.ofSeq)|> List.ofSeq)))
       yield! parseChars [] rest
   | '!'::IndirectLink(body, link, original, rest) ->
       yield! accLiterals.Value
